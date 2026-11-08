@@ -26,6 +26,9 @@ done
 if [[ ! -e "$root/package/beta" ]]; then
     printf '%s\n' steamdeck_stable > "$root/package/beta"
 fi
+# Older x86 Proton uses FEX and needs a real x86 Linux userspace.
+/usr/libexec/steamac-prepare-fex-rootfs
+export FEX_ROOTFS="$HOME/.local/share/steamac/fex-rootfs"
 # The upstream steam.sh still defaults to an x86 bootstrap. Use the actual
 # native client and its native libraries, letting the updater refresh them.
 export LD_LIBRARY_PATH="$root/steamrtarm64:$root/steamrtarm64/libs${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"

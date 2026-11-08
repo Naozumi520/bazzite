@@ -3,8 +3,9 @@ set -euo pipefail
 [[ "$(rpm --eval '%{_arch}')" == aarch64 ]]
 dnf -y --setopt=install_weak_deps=False --setopt=timeout=20 \
     --setopt=minrate=100000 install \
-    gtk2 openal-soft libssh2 pciutils plasma-pa upower glibc-langpack-en
+    python3 xxhash-libs curl squashfs-tools util-linux gtk2 openal-soft libssh2 pciutils plasma-pa upower glibc-langpack-en
 install -Dm755 /ctx/steamac/steam-arm64 /usr/bin/steam-arm64
+install -Dm755 /ctx/steamac/prepare-fex-rootfs /usr/libexec/steamac-prepare-fex-rootfs
 ln -s steam-arm64 /usr/bin/steam
 install -Dm755 /ctx/steamac/steam-arm64-bootstrap.py /usr/libexec/steam-arm64-bootstrap
 install -Dm644 /ctx/steamac/steam-arm64.desktop /usr/share/applications/steam-arm64.desktop
