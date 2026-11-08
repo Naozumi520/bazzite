@@ -27,7 +27,8 @@ Podman store. Load the appropriate archive with Podman or Docker.
 Mesa/Venus source plus backports against Fedora dependencies. It does not copy
 Arch userspace libraries into Fedora. The integrated target installs that Mesa
 stack, progress/clipboard agents, clock synchronization and controller services.
-Stock Fedora Mesa lacks the required virtio blob alignment support and has shown
+The first integration test reused older host GPU libraries; match the host app
+and guest backports before evaluating graphics stability. Stock Fedora Mesa lacks the required virtio blob alignment support and has shown
 GPU allocation failures; it is not the final steamac driver stack.
 
 The disk builder creates a fresh bootc disk with a local `bazzite` user, automatic
@@ -69,6 +70,10 @@ Local tests established:
 - The steamac fork's guest agent passes 80 tests; release validation tests cover
   trusted URLs, streaming hashes, bounded sparse extraction, cancellation,
   existing-file preservation and guest boot routing.
+
+Integrated guest tests still show Zink allocation failures and stalled game
+loading with both MoltenVK and KosmicKrisp, including matched 1.9.13 host
+libraries. This release is not yet validated for gameplay.
 
 The minimal FEX test rootfs is not shipped or a complete i686 gaming runtime.
 Steam login, Proton/Windows games, sustained graphics stability, gamepad/audio,
