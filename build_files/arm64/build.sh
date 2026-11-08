@@ -6,7 +6,9 @@ set -euo pipefail
 
 # Use native Fedora repositories. Do not pull x86 akmods, Steam RPMs or i686
 # libraries into this image, or silently skip missing required packages.
-dnf -y --setopt=install_weak_deps=False install \
+dnf -y --setopt=install_weak_deps=False \
+    --setopt=timeout=20 --setopt=minrate=100000 \
+    --setopt=retries=3 --setopt=max_parallel_downloads=10 install \
     plasma-desktop plasma-workspace plasma-workspace-wayland \
     sddm sddm-breeze konsole dolphin kde-settings \
     NetworkManager NetworkManager-wifi \

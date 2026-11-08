@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 # Called by build-arm64-local.sh inside its privileged ARM64 Linux container.
 set -euo pipefail
+mkdir -p /var/lib/containers/arm64-dnf-cache
 podman --storage-driver=overlay --events-backend=file build \
     --isolation=chroot --platform linux/arm64 --cap-add=all \
+    --volume /var/lib/containers/arm64-dnf-cache:/var/cache/libdnf5 \
     --security-opt label=disable --build-arg "REVISION=$BUILD_REVISION" \
     -f Containerfile.arm64 -t localhost/bazzite-arm64:experimental .
 podman image inspect localhost/bazzite-arm64:experimental > /out/image-inspect.json
