@@ -1,0 +1,70 @@
+name: Build ARM64 experimental
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/arm64-port]
+    paths:
+      - Containerfile.arm64
+      - build_files/arm64/**
+      - .github/workflows/build-arm64.yml
+permissions:
+  contents: read
+concurrency:
+  group: arm64-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 90
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Install native build tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y podman skopeo shellcheck
+          shellcheck build_files/arm64/build.sh
+          test "$(uname -m)" = aarch64
+      - name: Build and validate the bootc image
+        env:
+          REPOSITORY: ${{ github.repository }}
+          REVISION: ${{ github.sha }}
+        run: |
+          image="ghcr.io/${REPOSITORY,,}-arm64"
+          echo "IMAGE=${image}" >> "$GITHUB_ENV"
+          sudo podman build --platform linux/arm64 --pull=always \
+            --security-opt label=disable --cap-add=all \
+            --build-arg "SOURCE_URL=https://github.com/${REPOSITORY}" \
+            --build-arg "REVISION=${REVISION}" \
+            -f Containerfile.arm64 -t "${image}:experimental" .
+          test "$(sudo podman image inspect "${image}:experimental" --format '{{.Architecture}}')" = arm64
+          mkdir -p build-output
+          sudo podman run --rm --entrypoint cat "${image}:experimental" \
+            /usr/share/doc/bazzite-arm64/packages.txt > build-output/packages.txt
+          sudo podman image inspect "${image}:experimental" > build-output/image-inspect.json
+      - name: Publish experimental image
+        env:
+          REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REGISTRY_USER: ${{ github.actor }}
+          REVISION: ${{ github.sha }}
+        run: |
+          printf '%s' "$REGISTRY_TOKEN" | sudo podman login ghcr.io -u "$REGISTRY_USER" --password-stdin
+          sudo podman push --digestfile build-output/digest.txt \
+            "${IMAGE}:experimental" "docker://${IMAGE}:sha-${REVISION}"
+          sudo podman push "${IMAGE}:experimental" "docker://${IMAGE}:experimental"
+          sudo podman logout ghcr.io
+          {
+            echo '### ARM64 experimental foundation'
+            echo "Image: \`${IMAGE}:sha-${REVISION}\`"
+            echo "Digest: \`$(cat build-output/digest.txt)\`"
+            echo 'Native ARM64 build and bootc lint passed. No VM boot or steamac gaming validation performed.'
+            echo 'This image does not include Steam/Proton or a steamac-compatible disk layout.'
+          } >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: arm64-build-manifest
+          path: build-output/

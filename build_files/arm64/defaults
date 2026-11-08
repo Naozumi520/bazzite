@@ -1,0 +1,5 @@
+[Wallpaper]
+Image=/usr/share/wallpapers/bazzite-arm64/convergence.png
+
+[plasmashell][General]
+wallpaperPlugin=org.kde.image
