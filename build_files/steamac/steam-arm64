@@ -13,6 +13,16 @@ for name in steam root; do
     fi
     ln -sfn "$root" "$HOME/.steam/$name"
 done
+# The native client bypasses upstream steam.sh, so establish its SDK paths.
+for mapping in sdkarm64:linuxarm64 sdk64:linux64 sdk32:linux32 bin64:steamrt64 bin32:ubuntu12_32; do
+    name=${mapping%%:*}
+    target=${mapping#*:}
+    if [[ -e "$HOME/.steam/$name" && ! -L "$HOME/.steam/$name" ]]; then
+        echo "Refusing to replace existing $HOME/.steam/$name" >&2
+        exit 1
+    fi
+    ln -sfn "$root/$target" "$HOME/.steam/$name"
+done
 if [[ ! -e "$root/package/beta" ]]; then
     printf '%s\n' steamdeck_stable > "$root/package/beta"
 fi
