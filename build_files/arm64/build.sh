@@ -34,7 +34,9 @@ printf '%s\n' 'experimental-arm64' > /usr/share/doc/bazzite-arm64/variant
 install -d /usr/share/doc/bazzite-arm64
 rpm -qa --qf '%{NAME} %{VERSION}-%{RELEASE} %{ARCH}\n' \
     | sort > /usr/share/doc/bazzite-arm64/packages.txt
-if rpm -qa --qf '%{ARCH}\n' | grep -Ev '^(aarch64|noarch)$'; then
+# RPM public-key pseudo-packages have no architecture; check real packages.
+if rpm -qa --qf '%{NAME} %{ARCH}\n' \
+    | awk '$1 != "gpg-pubkey" && $2 != "aarch64" && $2 != "noarch" {print; bad=1} END {exit !bad}'; then
     echo 'Foreign architecture RPM found' >&2
     exit 1
 fi
