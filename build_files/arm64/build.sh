@@ -46,5 +46,6 @@ command -v FEXInterpreter
 find /usr/share/vulkan/icd.d -name '*virtio*.json' -print -quit | grep .
 
 dnf clean all
-rm -rf /var/cache/dnf /var/cache/libdnf5 /var/log/*
+mkdir -p /var/cache/dnf /var/cache/libdnf5
+find /var/cache/dnf /var/cache/libdnf5 /var/log -mindepth 1 -delete
 # bootc images populate /var at runtime; retain the base image's /var layout.

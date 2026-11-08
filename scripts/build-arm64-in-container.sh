@@ -6,7 +6,6 @@ podman_cmd=(podman --root /var/lib/containers/storage-vfs --storage-driver=vfs -
 mkdir -p /var/lib/containers/arm64-dnf-cache
 "${podman_cmd[@]}" build \
     --isolation=chroot --platform linux/arm64 --cap-add=all \
-    --volume /var/lib/containers/arm64-dnf-cache:/var/cache/libdnf5 \
     --security-opt label=disable --build-arg "REVISION=$BUILD_REVISION" \
     -f Containerfile.arm64 -t localhost/bazzite-arm64:experimental .
 "${podman_cmd[@]}" image inspect localhost/bazzite-arm64:experimental > /out/image-inspect.json
