@@ -1,0 +1,5 @@
+[Desktop Entry]
+Type=Application
+Name=Steamac desktop integration
+Exec=env FX_PROGRESS_DESKTOP_NATIVE=1 /usr/lib/steamac/fx-progress-agent
+Terminal=false

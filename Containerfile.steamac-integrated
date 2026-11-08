@@ -1,0 +1,11 @@
+# Native context comes from scripts/build-steamac-native.sh, built against Fedora.
+FROM localhost/bazzite-steamac:experimental
+COPY --from=native /mesa/usr/ /usr/
+COPY --from=native /fx-progress-agent /usr/lib/steamac/fx-progress-agent
+COPY build_files/steamac-integration/ /ctx/integration/
+RUN bash /ctx/integration/build.sh && rm -rf /ctx
+RUN --network=none bootc container lint
+ARG REVISION=unknown
+ARG STEAMAC_REVISION=unknown
+LABEL org.opencontainers.image.revision="${REVISION}" \
+      io.github.naozumi520.steamac.revision="${STEAMAC_REVISION}"

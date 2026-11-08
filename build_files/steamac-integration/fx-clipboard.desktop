@@ -1,0 +1,5 @@
+[Desktop Entry]
+Type=Application
+Name=Steamac shared clipboard
+Exec=/usr/lib/steamac/fx-progress-agent clipboard
+Terminal=false
