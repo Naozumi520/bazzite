@@ -1,0 +1,11 @@
+# Add the dependencies verified with FX Steam Launcher to the foundation image.
+# Load arm64-output/bazzite-arm64.oci.tar before building this target.
+ARG BASE_IMAGE=localhost/bazzite-arm64:experimental
+FROM ${BASE_IMAGE}
+COPY build_files/steamac /ctx/steamac
+RUN bash /ctx/steamac/build.sh && rm -rf /ctx
+RUN --network=none bootc container lint
+ARG REVISION=unknown
+LABEL org.opencontainers.image.title="Bazzite ARM64 steamac experimental" \
+      org.opencontainers.image.description="Experimental Fedora bootc guest for libkrun, with native ARM64 Steam bootstrap" \
+      org.opencontainers.image.revision="${REVISION}"

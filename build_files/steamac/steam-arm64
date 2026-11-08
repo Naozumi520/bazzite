@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# Valve's own ARM64 updater manages the client after the initial bootstrap.
+set -euo pipefail
+root="$HOME/.local/share/Steam"
+if [[ ! -x "$root/steamrtarm64/steam" ]]; then
+    /usr/libexec/steam-arm64-bootstrap
+fi
+mkdir -p "$HOME/.steam" "$root/package"
+for name in steam root; do
+    if [[ -e "$HOME/.steam/$name" && ! -L "$HOME/.steam/$name" ]]; then
+        echo "Refusing to replace existing $HOME/.steam/$name" >&2
+        exit 1
+    fi
+    ln -sfn "$root" "$HOME/.steam/$name"
+done
+if [[ ! -e "$root/package/beta" ]]; then
+    printf '%s\n' steamdeck_stable > "$root/package/beta"
+fi
+# The upstream steam.sh still defaults to an x86 bootstrap. Use the actual
+# native client and its native libraries, letting the updater refresh them.
+export LD_LIBRARY_PATH="$root/steamrtarm64:$root/steamrtarm64/libs${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+export MESA_LOADER_DRIVER_OVERRIDE="${MESA_LOADER_DRIVER_OVERRIDE:-zink}"
+cd "$root"
+for attempt in 1 2 3; do
+    status=0
+    "$root/steamrtarm64/steam" "$@" || status=$?
+    if [[ $status != 42 ]]; then
+        exit "$status"
+    fi
+done
+echo 'Steam requested too many updater restarts; start it again to retry.' >&2
+exit 1

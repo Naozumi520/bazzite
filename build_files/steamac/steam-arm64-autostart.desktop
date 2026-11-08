@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=Steam Big Picture
+Exec=steam-arm64 -steamos -steamdeck -tenfoot -nobreakpad
+Terminal=false
+X-KDE-autostart-after=panel
