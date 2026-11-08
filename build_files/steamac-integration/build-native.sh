@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 set -euo pipefail
 export CARGO_HOME=/tmp/cargo
 export RUSTUP_HOME=/tmp/rustup
@@ -6,6 +7,8 @@ cp -a /agent /tmp/agent
 cargo test --manifest-path /tmp/agent/Cargo.toml --release --locked
 cargo build --manifest-path /tmp/agent/Cargo.toml --release --locked
 install -Dm755 /tmp/agent/target/release/fx-progress-agent /out/fx-progress-agent
+# Provided read-only by the steamac checkout.
+# shellcheck source=/dev/null
 source /common.sh
 build_venus /tmp/venus lib64 /tmp/dest-venus
 install -Dm755 /tmp/dest-venus/usr/lib64/libvulkan_virtio.so /out/mesa/usr/lib64/libvulkan_virtio.so

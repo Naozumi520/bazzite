@@ -21,7 +21,7 @@ fi
 export LD_LIBRARY_PATH="$root/steamrtarm64:$root/steamrtarm64/libs${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 export MESA_LOADER_DRIVER_OVERRIDE="${MESA_LOADER_DRIVER_OVERRIDE:-zink}"
 cd "$root"
-for attempt in 1 2 3; do
+for _ in 1 2 3; do
     status=0
     "$root/steamrtarm64/steam" "$@" || status=$?
     if [[ $status != 42 ]]; then
