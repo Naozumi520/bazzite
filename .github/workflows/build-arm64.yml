@@ -64,7 +64,7 @@ jobs:
             echo 'Native ARM64 build and bootc lint passed. No VM boot or steamac gaming validation performed.'
             echo 'This image does not include Steam/Proton or a steamac-compatible disk layout.'
           } >> "$GITHUB_STEP_SUMMARY"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: arm64-build-manifest
           path: build-output/

@@ -12,7 +12,7 @@ dnf -y --setopt=install_weak_deps=False install \
     NetworkManager NetworkManager-wifi \
     pipewire pipewire-pulseaudio wireplumber alsa-utils \
     mesa-dri-drivers mesa-vulkan-drivers vulkan-tools glx-utils \
-    xorg-x11-server-Xwayland gamescope lutris FEX-Emu \
+    xorg-x11-server-Xwayland gamescope lutris fex-emu \
     flatpak firefox xdg-user-dirs xdg-utils sudo
 
 systemctl set-default graphical.target
@@ -36,7 +36,7 @@ if rpm -qa --qf '%{ARCH}\n' | grep -Ev '^(aarch64|noarch)$'; then
     echo 'Foreign architecture RPM found' >&2
     exit 1
 fi
-rpm -q kernel-core plasma-desktop mesa-vulkan-drivers gamescope lutris FEX-Emu
+rpm -q kernel-core plasma-desktop mesa-vulkan-drivers gamescope lutris fex-emu
 command -v FEXInterpreter
 # A Venus ICD must actually be present, not just assumed from the Mesa package.
 find /usr/share/vulkan/icd.d -name '*virtio*.json' -print -quit | grep .

@@ -26,9 +26,26 @@ sudo podman build --platform linux/arm64 --cap-add=all \
   -t localhost/bazzite-arm64:experimental .
 ```
 
+On an Apple Silicon Mac with Docker running, the equivalent reproducible local
+build is:
+
+```sh
+./scripts/build-arm64-local.sh
+```
+
+It uses a separate Docker volume for the Podman image store, requires committed
+sources, and exports `arm64-output/bazzite-arm64.oci.tar`, `SHA256SUMS`, package
+inventory, image metadata and source revision. It refuses to overwrite an
+existing final archive. Load the archive on an ARM64 Linux machine with
+`sudo podman load -i bazzite-arm64.oci.tar`. Docker is used as the Linux build VM;
+this operating system image is intended for bootc, not as an ordinary desktop
+application container.
+
 The `Build ARM64 experimental` GitHub workflow uses `ubuntu-24.04-arm` and pushes
 `ghcr.io/naozumi520/bazzite-arm64:experimental` plus an immutable `sha-<commit>`
-tag. Its downloadable build manifest records the package list, image metadata
+tag when GitHub Actions and package publishing are available for the account.
+The first attempt did not start because GitHub reported an account billing lock;
+local builds do not require GitHub Actions. Its downloadable build manifest records the package list, image metadata
 and pushed digest. A successful build validates container construction; it does
 not establish that the operating system boots or games work.
 

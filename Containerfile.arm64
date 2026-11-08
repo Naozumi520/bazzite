@@ -2,6 +2,10 @@
 # The upstream Containerfile needs x86-only akmods and multilib repositories.
 ARG BASE_IMAGE=quay.io/fedora/fedora-bootc:45@sha256:451894faadba48a53c4449efa8b872a1c004b80d8bb3dab71c4c93f631129d59
 FROM ${BASE_IMAGE}
+COPY build_files/arm64 /ctx/arm64
+COPY system_files/desktop/kinoite/usr/share/wallpapers/convergence.png /usr/share/wallpapers/bazzite-arm64/convergence.png
+RUN bash /ctx/arm64/build.sh && rm -rf /ctx
+RUN --network=none bootc container lint
 ARG SOURCE_URL=https://github.com/Naozumi520/bazzite
 ARG REVISION=unknown
 LABEL org.opencontainers.image.title="Bazzite ARM64 experimental foundation" \
@@ -10,7 +14,3 @@ LABEL org.opencontainers.image.title="Bazzite ARM64 experimental foundation" \
       org.opencontainers.image.revision="${REVISION}" \
       org.opencontainers.image.licenses="Apache-2.0" \
       containers.bootc=1
-COPY build_files/arm64 /ctx/arm64
-COPY system_files/desktop/kinoite/usr/share/wallpapers/convergence.png /usr/share/wallpapers/bazzite-arm64/convergence.png
-RUN bash /ctx/arm64/build.sh && rm -rf /ctx
-RUN --network=none bootc container lint
